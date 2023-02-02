@@ -1,1 +1,8 @@
-console.log("todo");
+import UI from "./UI"
+
+
+document.addEventListener('DOMContentLoaded',UI.loadUI())
+
+
+
+

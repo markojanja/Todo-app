@@ -1,5 +1,6 @@
 import Project from "./Project"
 
+
 export default class ProjectList{
     constructor(){
         this.projectList = []
@@ -16,11 +17,19 @@ export default class ProjectList{
         })
         this.projectList.splice(index, 1)
     }
-    updateProject(projectName,newProjectName){
+    updateProjects(projectName,newProjectName){
         const project = this.projectList.find(project=>{
             return projectName === project.name
         })
         project.name = newProjectName       
+        return project
+    }
+
+    selectProject(name){
+        const project = this.projectList.find(project=>{
+            return name === project.name
+        })
+
         return project
     }
 

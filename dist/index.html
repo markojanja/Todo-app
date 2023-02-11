@@ -4,19 +4,29 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>todo</title>
 </head>
 <body id="app">
-
-    <form action="" id="myForm">
-        <input type="text" name="tasks" id="taskName">
-        <button type="submit" id="btn">Add project</button>
-    </form>
-
-
-    <div id="list"></div>
-    <div id="project"></div>
-    <div class="tasks"></div>
+    <nav class="navbar">
+        <div class="nav-logo">
+            <h2>TodoApp</h2>
+        </div>
+    </nav>
+    <div class="wrapper">
+        <aside class="sidebar">
+            <button class="toggle-form">Add new</button>
+            <form id="myForm">
+                <input type="text" name="tasks" id="taskName" required>
+                <button type="submit" id="btn">Add project</button>
+            </form>
+        
+            <ul class="project-list" id="list"></ul>
+        </aside>
+        <div class="main">
+            <div class="" id="project"></div>
+        </div>
+    </div>
     <script src="main.js"></script>
 </body>
 </html>

@@ -48,7 +48,7 @@ export default class UI {
         input.value = projectName;
         modal.style.display = "flex";
 
-        UI.renderProject(UI.projects.selectProject(projectName))
+        UI.renderProject(UI.projects.selectProject(projectName));
         modal.addEventListener("submit", (e) => {
           e.preventDefault();
 
@@ -91,16 +91,16 @@ export default class UI {
     UI.projects.projectList.map((project) => {
       list.innerHTML += `
       <li class="project-link">
-      <div class="link-container">
-      <h3 class="title">${project.name}</h3>
-      <button class="btn-edit" type="button" data-value="${project.name}"><i class="fa-solid fa-pen" data-value="${project.name}"></i></button>
-      <button class="btn-delete" type="button" data-value="${project.name}"><i class="fa-solid fa-trash"></i></button>
-      </div>
+        <div class="link-container">
+          <h3 class="title">${project.name}</h3>
+          <button class="btn-edit" type="button" data-value="${project.name}"><i class="fa-solid fa-pen" data-value="${project.name}"></i></button>
+          <button class="btn-delete" type="button" data-value="${project.name}"><i class="fa-solid fa-trash"></i></button>
+        </div>
 
         <form class="modal">
-           <input type="text" class="inputVal" id="input-${project.name}" required>
+          <input type="text" class="inputVal" id="input-${project.name}" required>
           <button class="add-btn" type="submit" id="btn3"><i class="fa-solid fa-check"></i></button>
-         </form>
+        </form>
       </li>
       `;
     });
@@ -134,35 +134,48 @@ export default class UI {
     </form>
     <ul id="taskList"></ul>`;
 
-    UI.taskFormHandler();
+    UI.createTaskConroller();
     if (project.todos.length > 0) {
-      const taskList = document.getElementById("taskList");
-      project.todos.map((todo) => {
-        taskList.innerHTML += `<li>${todo}</li>`;
-      });
+      this.renderTasks()
     }
   }
 
   // tasks
-  //add task form handler
-  static taskFormHandler() {
-    const myForm2 = document.getElementById("myForm2");
-    const tasks2 = document.getElementById("taskList");
+  // reneder tasks
+  static renderTasks() {
+    const taskList = document.getElementById("taskList");
     const titleProject = document.querySelector(".pt").textContent;
-    const pr = UI.projects.selectProject(titleProject);
+    const activeProject = UI.projects.selectProject(titleProject);
+    taskList.innerHTML = "";
+    activeProject.todos.map((todo) => {
+      taskList.innerHTML += `<li>${todo.name}</li>`;
+    });
+    UI.updateTaskController()
+    UI.deleteTaskController()
+  }
+  //add task form handler
+  static createTaskConroller() {
+    const myForm2 = document.getElementById("myForm2");
+    const projectName = document.querySelector(".pt").textContent;
+    const activeProject = UI.projects.selectProject(projectName);
     myForm2.addEventListener(
       "submit",
       (e) => {
         e.preventDefault();
         const title = document.getElementById("taskName2");
-        pr.addTodo(title.value);
-        tasks2.innerHTML = "";
-        pr.todos.map((todo) => {
-          tasks2.innerHTML += `<li>${todo}</li>`;
-        });
+        activeProject.addTodo(title.value);
+        UI.renderTasks();
         myForm2.reset();
       },
       false
     );
+  }
+  // updateTask
+  static updateTaskController() {
+    console.log("this is for update")
+  }
+  // delete task
+  static deleteTaskController(){
+    console.log("this is for delete")
   }
 }

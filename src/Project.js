@@ -1,11 +1,14 @@
+import Task from "./Task";
+
 export default class Project{
     constructor(name){
         this.name = name;
         this.todos = [];
     }
 
-    addTodo(todo){
-        this.todos.push(todo)
+    addTodo(name){
+        const task = new Task(name)
+        this.todos.push(task)
     }
     deleteTodo(title){
         const i  = this.todos.findIndex(todo=>{

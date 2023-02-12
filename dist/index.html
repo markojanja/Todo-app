@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>todo</title>
 </head>
 <body id="app">
@@ -15,16 +16,16 @@
     </nav>
     <div class="wrapper">
         <aside class="sidebar">
-            <button class="toggle-form">Add new</button>
+            <button class="toggle-form"><i class="fa-solid fa-plus"></i></button>
             <form id="myForm">
-                <input type="text" name="tasks" id="taskName" required>
-                <button type="submit" id="btn">Add project</button>
+                <input type="text" name="tasks" id="projectName" required autocomplete="off" placeholder="Project name">
+                <button class="add-btn"type="submit" id="btn"><i class="fa-solid fa-check"></i></button>
             </form>
         
             <ul class="project-list" id="list"></ul>
         </aside>
         <div class="main">
-            <div class="" id="project"></div>
+            <div class="project" id="project"></div>
         </div>
     </div>
     <script src="main.js"></script>

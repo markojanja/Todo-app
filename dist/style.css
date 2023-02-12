@@ -6,12 +6,15 @@
     --sec-clr-2:#1e293b;
 }
 
-
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: sans-serif;
+}
+.btn-edit i{
+    height: 100%;
+    width: 100%;
 }
 ul{
     list-style: none;
@@ -20,12 +23,39 @@ html, body{
     background-color: var(--primary-clr);
     color: var(--font-clr);
 }
+/* buttons */
+
+.toggle-form{
+    cursor: pointer;
+    display: inline-block;
+    background: none;
+    outline: none;
+    border: 3px solid var(--sec-clr);
+    padding: 20px;
+    border-radius: 50%;
+}
+.add-btn,.btn-edit,.btn-delete{
+    cursor: pointer;
+    display: inline-block;
+    padding: 7px;
+    border-radius: 50%;
+    background: var(--sec-clr);
+    outline: none;
+    border: none;
+    color: var(--primary-clr);
+    
+}
+.toggle-form i {
+    color: var(--sec-clr);
+    font-size: 1.6rem;
+}
 #app{
     position: relative;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
+
 .navbar{
     position: relative;
     padding: 20px;
@@ -54,24 +84,47 @@ html, body{
     flex-direction: column;
     align-items: center;
     gap: 30px;
-    width: 25vw;
+    width: 30vw;
     background-color: var(--sec-clr-2);
     padding-top: 100px;
+    padding-inline: 10px;
 
 }
 #myForm{
     display: none;
+    width: 100%;
+
+}
+#myForm input,.modal input{
+    background-color: #0f172a;
+    border: none;
+    outline: none;
+    border-bottom: 2px solid var(--sec-clr);
+    color: var(--font-clr);
+    padding: 10px;
+    font-size: 1.1rem;
+    width: 90%;
 }
 .show{
     display: flex!important;
-    flex-direction: column;
+    flex-direction: row;
+    background-color: var(--primary-clr);
+    gap: 10px;
+    padding: 50px;
+    border-radius: 15px;
+    align-items: center;
+    justify-content: center;
 }
+
 .sidebar button{
     position: relative;
     display: inline-block;  
 }
 .project-list{
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     padding: 10px;
     width: 100%;
 }
@@ -80,10 +133,29 @@ html, body{
     font-size: 1.2rem;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 10px;
     text-align: center;
+    background-color: #0f172a;
+    padding: 20px 10px;
+    border-radius: 10px;
+}
+.link-container{
+    display: flex;
+    padding: 5px;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.link-container .title{
+    flex: 1;
 }
 .modal{
     display: none;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-clr);
+    border-radius: 15px;
+    padding: 20px;
+    gap: 10px;
 }

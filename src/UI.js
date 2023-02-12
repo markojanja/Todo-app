@@ -24,7 +24,7 @@ export default class UI {
       "submit",
       (e) => {
         e.preventDefault();
-        const taskName = document.getElementById("taskName");
+        const taskName = document.getElementById("projectName");
         if (!taskName.value) return console.log("this is empty");
         UI.projects.addProjects(taskName.value);
         const p = UI.projects.selectProject(taskName.value);
@@ -44,13 +44,14 @@ export default class UI {
       editButton.addEventListener("click", (e) => {
         const modal = card.querySelector(".modal");
         let projectName = e.target.dataset.value;
-
+        const input = document.getElementById(`input-${projectName}`);
+        input.value = projectName;
         modal.style.display = "flex";
 
         UI.renderProject(UI.projects.selectProject(projectName))
         modal.addEventListener("submit", (e) => {
           e.preventDefault();
-          const input = document.getElementById(`input-${projectName}`);
+
           if (!input.value) return console.log("this is empty");
           this.projects.updateProjects(projectName, input.value);
           this.renderProjectList();
@@ -90,12 +91,15 @@ export default class UI {
     UI.projects.projectList.map((project) => {
       list.innerHTML += `
       <li class="project-link">
+      <div class="link-container">
       <h3 class="title">${project.name}</h3>
-      <button class="btn-edit" type="button" data-value="${project.name}">Edit</button>
-      <button class="btn-delete" type="button" data-value="${project.name}">delete</button>
+      <button class="btn-edit" type="button" data-value="${project.name}"><i class="fa-solid fa-pen" data-value="${project.name}"></i></button>
+      <button class="btn-delete" type="button" data-value="${project.name}"><i class="fa-solid fa-trash"></i></button>
+      </div>
+
         <form class="modal">
            <input type="text" class="inputVal" id="input-${project.name}" required>
-          <button type="submit" id="btn3">Update</button>
+          <button class="add-btn" type="submit" id="btn3"><i class="fa-solid fa-check"></i></button>
          </form>
       </li>
       `;
@@ -134,7 +138,7 @@ export default class UI {
     if (project.todos.length > 0) {
       const taskList = document.getElementById("taskList");
       project.todos.map((todo) => {
-        taskList.innerHTML += `<p>${todo}</p>`;
+        taskList.innerHTML += `<li>${todo}</li>`;
       });
     }
   }

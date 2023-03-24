@@ -1,5 +1,7 @@
 export default class Task{
-    constructor(name){
+    constructor(name,priority='normal'){
         this.name = name
+        this.status = false
+        this.priority = priority
     }
 }

@@ -6,8 +6,8 @@ export default class Project{
         this.todos = [];
     }
 
-    addTodo(name){
-        const task = new Task(name)
+    addTodo(name,priority){
+        const task = new Task(name,priority)
         this.todos.push(task)
     }
     deleteTodo(title){
@@ -15,5 +15,12 @@ export default class Project{
            return todo.name === title
         })
         this.todos.splice(i,1)
+    }
+    updateStatus(title){
+        this.todos.find(todo=>{
+            if(todo.name===title){
+               todo.status = !todo.status
+            }
+        })
     }
 }

@@ -128,9 +128,16 @@ export default class UI {
     tasks.innerHTML = "";
     tasks.innerHTML = `<h1 class='pt'>${project.name}</h1>`;
     tasks.innerHTML += `
-    <form action="" id="myForm2">
+    <form action="" id="myForm2" autocomplete="off">
+    <label for="project">Enter task name</label>
       <input type="text" name="project" id="taskName2" required>
-      <button type="submit" id="btn">Add task</button>
+      <label for="priority">Choose priority</label>
+        <select id="select" name="priority">
+          <option value="high">high</option>
+          <option value="normal">normal</option>
+          <option value="low">low</option>
+        </select>
+      <button type="submit" id="btn"></button>
     </form>
     <ul id="taskList"></ul>`;
 
@@ -148,7 +155,24 @@ export default class UI {
     const activeProject = UI.projects.selectProject(titleProject);
     taskList.innerHTML = "";
     activeProject.todos.map((todo) => {
-      taskList.innerHTML += `<li>${todo.name}</li>`;
+      if(!todo.status){
+        taskList.innerHTML += `
+        <li class="task-card p-${todo.priority}">
+          <button class="status-btn" data-val="${todo.name}"></button>
+          <p>${todo.name}</p>
+          <button class="delete-task" data-value="${todo.name}"></button>
+        </li>`;
+      }
+      else{
+        taskList.innerHTML += `
+        <li class="task-card p-${todo.priority}">
+        <button class="status-btn st-done" data-val="${todo.name}"></button>
+        <p>${todo.name}</p>
+        <button class="delete-task" data-value="${todo.name}"></button>
+        </li>`;
+      }
+
+      
     });
     UI.updateTaskController()
     UI.deleteTaskController()
@@ -163,7 +187,10 @@ export default class UI {
       (e) => {
         e.preventDefault();
         const title = document.getElementById("taskName2");
-        activeProject.addTodo(title.value);
+        const priority = document.getElementById('select')
+        // const selectVal =
+    
+        activeProject.addTodo(title.value,priority.value);
         UI.renderTasks();
         myForm2.reset();
       },
@@ -172,10 +199,32 @@ export default class UI {
   }
   // updateTask
   static updateTaskController() {
-    console.log("this is for update")
+    const statusBtns = document.querySelectorAll('.status-btn')
+    const projectName = document.querySelector(".pt").textContent;
+    const activeProject = UI.projects.selectProject(projectName);
+
+    statusBtns.forEach(btn=>{
+      btn.addEventListener('click',(e)=>{
+        const taskName = e.target.dataset.val
+        activeProject.updateStatus(taskName)
+        UI.renderTasks()
+      })
+    })
+   
   }
   // delete task
   static deleteTaskController(){
-    console.log("this is for delete")
+    const tasksBtns = document.querySelectorAll('.delete-task')
+    const projectName = document.querySelector(".pt").textContent;
+    const activeProject = UI.projects.selectProject(projectName);
+    console.log(activeProject)
+    tasksBtns.forEach(btn=>{
+      btn.addEventListener('click',(e)=>{
+        const taskName = e.target.dataset.value;
+        console.log(taskName)
+        activeProject.deleteTodo(taskName)
+        this.renderTasks()
+      })
+    })
   }
 }

@@ -1,4 +1,5 @@
 import ProjectList from "./ProjectsList";
+import generateTaskList from "./helper";
 
 export default class UI {
   static loadUI() {
@@ -7,6 +8,7 @@ export default class UI {
     UI.setActiveProject();
     UI.UpdateProjectController();
     UI.toggleFormButtonController();
+    UI.renderTodaysTasks();
   }
   static projects = new ProjectList();
 
@@ -85,7 +87,9 @@ export default class UI {
     });
   }
 
+
   static renderProjectList() {
+    
     const list = document.getElementById("list");
     list.innerHTML = "";
     UI.projects.projectList.map((project) => {
@@ -104,6 +108,7 @@ export default class UI {
       </li>
       `;
     });
+  
     this.UpdateProjectController();
     this.deleteProjectController();
   }
@@ -133,8 +138,8 @@ export default class UI {
       <input type="text" name="project" id="taskName2" required>
       <label for="priority">Choose priority</label>
         <select id="select" name="priority">
-          <option value="high">high</option>
           <option value="normal">normal</option>
+          <option value="high">high</option>
           <option value="low">low</option>
         </select>
       <button type="submit" id="btn"></button>
@@ -142,41 +147,23 @@ export default class UI {
     <ul id="taskList"></ul>`;
 
     UI.createTaskConroller();
+    
     if (project.todos.length > 0) {
-      this.renderTasks()
+      UI.renderTasks2(project)
     }
+   
   }
 
-  // tasks
-  // reneder tasks
-  static renderTasks() {
-    const taskList = document.getElementById("taskList");
-    const titleProject = document.querySelector(".pt").textContent;
-    const activeProject = UI.projects.selectProject(titleProject);
-    taskList.innerHTML = "";
-    activeProject.todos.map((todo) => {
-      if(!todo.status){
-        taskList.innerHTML += `
-        <li class="task-card p-${todo.priority}">
-          <button class="status-btn" data-val="${todo.name}"></button>
-          <p>${todo.name}</p>
-          <button class="delete-task" data-value="${todo.name}"></button>
-        </li>`;
-      }
-      else{
-        taskList.innerHTML += `
-        <li class="task-card p-${todo.priority}">
-        <button class="status-btn st-done" data-val="${todo.name}"></button>
-        <p>${todo.name}</p>
-        <button class="delete-task" data-value="${todo.name}"></button>
-        </li>`;
-      }
 
-      
-    });
-    UI.updateTaskController()
-    UI.deleteTaskController()
+
+  static renderTasks2(obj) {
+
+    generateTaskList(obj.todos)
+    this.updateTaskController(obj)
+    this.deleteTaskController(obj)
+
   }
+
   //add task form handler
   static createTaskConroller() {
     const myForm2 = document.getElementById("myForm2");
@@ -187,44 +174,68 @@ export default class UI {
       (e) => {
         e.preventDefault();
         const title = document.getElementById("taskName2");
-        const priority = document.getElementById('select')
-        // const selectVal =
-    
+        const priority = document.getElementById('select')    
         activeProject.addTodo(title.value,priority.value);
-        UI.renderTasks();
+        UI.renderTasks2(activeProject);
         myForm2.reset();
-      },
-      false
+      }
     );
+
   }
   // updateTask
-  static updateTaskController() {
+  static updateTaskController(obj) {
+
     const statusBtns = document.querySelectorAll('.status-btn')
-    const projectName = document.querySelector(".pt").textContent;
-    const activeProject = UI.projects.selectProject(projectName);
 
     statusBtns.forEach(btn=>{
+
       btn.addEventListener('click',(e)=>{
+        let projectName = e.target.dataset.key
+        let activeProject = UI.projects.selectProject(projectName)
         const taskName = e.target.dataset.val
         activeProject.updateStatus(taskName)
-        UI.renderTasks()
+        UI.renderTasks2(activeProject)
+
+        activeProject = obj
+
+        UI.renderTasks2(activeProject)
       })
     })
    
   }
+
+
   // delete task
   static deleteTaskController(){
     const tasksBtns = document.querySelectorAll('.delete-task')
-    const projectName = document.querySelector(".pt").textContent;
-    const activeProject = UI.projects.selectProject(projectName);
-    console.log(activeProject)
+
     tasksBtns.forEach(btn=>{
       btn.addEventListener('click',(e)=>{
+        let projectName = e.target.dataset.key
+        let activeProject = UI.projects.selectProject(projectName)
         const taskName = e.target.dataset.value;
-        console.log(taskName)
         activeProject.deleteTodo(taskName)
-        this.renderTasks()
+        activeProject = UI.projects.filterTodays('normal')
+        UI.renderTasks2(activeProject)
       })
     })
   }
+
+  static renderTodaysTasks(){
+    const today = document.getElementById('today')
+    const tasks = document.querySelector("#project");
+
+    today.addEventListener('click',()=>{
+      tasks.innerHTML = ''
+      tasks.innerHTML = `
+      <h1 class='pt'>Today</h1>
+      <ul id="taskList"></ul>
+      `;
+      let todays = UI.projects.filterTodays('normal')
+      UI.renderTasks2(todays)
+    })
+
+  }
 }
+
+

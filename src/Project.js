@@ -7,7 +7,7 @@ export default class Project{
     }
 
     addTodo(name,priority){
-        const task = new Task(name,priority)
+        const task = new Task(name,priority,this.name)
         this.todos.push(task)
     }
     deleteTodo(title){

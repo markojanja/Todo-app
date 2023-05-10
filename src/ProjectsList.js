@@ -33,5 +33,16 @@ export default class ProjectList{
         return project
     }
 
+    filterTodays(pr){
+
+        const completedTasks = this.projectList.reduce((acc, curr) => {
+          const completed = curr.todos.filter(task => task.priority === pr);
+          return acc.concat(completed);
+        }, []);
+        
+        return {name:"today" ,todos:completedTasks}
+        
+      }
+
  
 }

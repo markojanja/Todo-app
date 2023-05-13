@@ -6,8 +6,8 @@ export default class Project{
         this.todos = [];
     }
 
-    addTodo(name,priority){
-        const task = new Task(name,priority,this.name)
+    addTodo(name,priority,date){
+        const task = new Task(name,priority,this.name,date)
         this.todos.push(task)
     }
     deleteTodo(title){

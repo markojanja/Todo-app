@@ -9,6 +9,8 @@ export default class UI {
     UI.UpdateProjectController();
     UI.toggleFormButtonController();
     UI.renderTodaysTasks();
+    UI.renderThisWeek();
+    UI.renderAllTasks();
   }
   static projects = new ProjectList();
 
@@ -134,8 +136,10 @@ export default class UI {
     tasks.innerHTML = `<h1 class='pt'>${project.name}</h1>`;
     tasks.innerHTML += `
     <form action="" id="myForm2" autocomplete="off">
-    <label for="project">Enter task name</label>
+      <label for="project">Enter task name</label>
       <input type="text" name="project" id="taskName2" required>
+      <label for="date">Pick date</label>
+      <input type="date" name="date" id="taskDate" required>
       <label for="priority">Choose priority</label>
         <select id="select" name="priority">
           <option value="normal">normal</option>
@@ -149,18 +153,17 @@ export default class UI {
     UI.createTaskConroller();
     
     if (project.todos.length > 0) {
-      UI.renderTasks2(project)
+      UI.renderTasks(project)
     }
    
   }
 
 
 
-  static renderTasks2(obj) {
-
+  static renderTasks(obj) {
     generateTaskList(obj.todos)
-    this.updateTaskController(obj)
-    this.deleteTaskController(obj)
+    UI.updateTaskController(obj)
+    UI.deleteTaskController(obj)
 
   }
 
@@ -174,10 +177,14 @@ export default class UI {
       (e) => {
         e.preventDefault();
         const title = document.getElementById("taskName2");
+        const dt = document.getElementById('taskDate')
+        const date = new Date(dt.value).toDateString();
         const priority = document.getElementById('select')    
-        activeProject.addTodo(title.value,priority.value);
-        UI.renderTasks2(activeProject);
+        activeProject.addTodo(title.value,priority.value,date);
+        // console.log(activeProject)
+        UI.renderTasks(activeProject);
         myForm2.reset();
+       
       }
     );
 
@@ -192,13 +199,11 @@ export default class UI {
       btn.addEventListener('click',(e)=>{
         let projectName = e.target.dataset.key
         let activeProject = UI.projects.selectProject(projectName)
-        const taskName = e.target.dataset.val
+        let taskName = e.target.dataset.val
         activeProject.updateStatus(taskName)
-        UI.renderTasks2(activeProject)
-
         activeProject = obj
-
-        UI.renderTasks2(activeProject)
+        // console.log(activeProject)
+        UI.renderTasks(activeProject)
       })
     })
    
@@ -206,20 +211,58 @@ export default class UI {
 
 
   // delete task
-  static deleteTaskController(){
+  static deleteTaskController(obj){
     const tasksBtns = document.querySelectorAll('.delete-task')
-
     tasksBtns.forEach(btn=>{
       btn.addEventListener('click',(e)=>{
-        let projectName = e.target.dataset.key
+        let projectName = e.target.dataset.keydel
         let activeProject = UI.projects.selectProject(projectName)
-        const taskName = e.target.dataset.value;
+        let taskName = e.target.dataset.value;
         activeProject.deleteTodo(taskName)
-        activeProject = UI.projects.filterTodays('normal')
-        UI.renderTasks2(activeProject)
+
+        activeProject = obj
+        switch (obj.name) {
+          case 'all':
+            activeProject = UI.projects.getAllTasks()
+            UI.renderTasks(activeProject)
+            break;
+          case 'today':
+            activeProject = UI.projects.filterTodays()
+            UI.renderTasks(activeProject)
+          case 'week':
+            activeProject = UI.projects.filterThisWeek()
+            UI.renderTasks(activeProject)  
+          default:
+            activeProject = obj
+            UI.renderTasks(activeProject)
+            break;
+        }
+ 
+        UI.renderTasks(activeProject)
       })
     })
   }
+
+  static renderAllTasks(){
+    const allTasksBtn = document.getElementById('all')
+    const tasks = document.querySelector("#project");
+   
+
+    allTasksBtn.addEventListener('click',()=>{
+
+      console.log('all tasks')
+      tasks.innerHTML = ''
+      tasks.innerHTML = `
+      <h1 class='pt'>All</h1>
+      <ul id="taskList"></ul>
+      `;
+      let all = UI.projects.getAllTasks()
+
+      UI.renderTasks(all)
+    })
+
+  }
+
 
   static renderTodaysTasks(){
     const today = document.getElementById('today')
@@ -231,10 +274,27 @@ export default class UI {
       <h1 class='pt'>Today</h1>
       <ul id="taskList"></ul>
       `;
-      let todays = UI.projects.filterTodays('normal')
-      UI.renderTasks2(todays)
+      let todays = UI.projects.filterTodays()
+      UI.renderTasks(todays)
     })
 
+  }
+  static renderThisWeek(){
+    const weekBtn = document.getElementById('week')
+    const tasks = document.querySelector("#project");
+
+    weekBtn.addEventListener('click',()=>{
+      tasks.innerHTML = ''
+      tasks.innerHTML = `
+      <h1 class='pt'>Week</h1>
+      <ul id="taskList"></ul>
+      `;
+      let week = UI.projects.filterThisWeek()
+
+      UI.renderTasks(week)
+      week = UI.projects.filterThisWeek()
+    })
+    
   }
 }
 

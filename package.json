@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "description": "Todo application",
   "main": "main.js",
-  "private":true,
-
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build":"webpack"
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -22,5 +21,8 @@
   "homepage": "https://github.com/markojanja/Todo-app#readme",
   "devDependencies": {
     "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "date-fns": "^2.30.0"
   }
 }

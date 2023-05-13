@@ -108,6 +108,13 @@ body {
   font-size: 1.1rem;
   width: 90%;
 }
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  border-radius: 4px;
+  margin-right: 2px;
+  opacity: 0.6;
+  filter: invert(1);
+}
 .show {
   display: flex !important;
   flex-direction: row;

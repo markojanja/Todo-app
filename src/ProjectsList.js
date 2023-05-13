@@ -1,4 +1,5 @@
 import Project from "./Project"
+import { isThisWeek,parseISO } from "date-fns"
 
 
 export default class ProjectList{
@@ -33,16 +34,35 @@ export default class ProjectList{
         return project
     }
 
-    filterTodays(pr){
+    getAllTasks(){
+      let arrr = []
+      this.projectList.forEach(project=>{
+        arrr = project.todos.concat(arrr)
+        })
+
+        return {name:"all",todos:arrr}
+    }
+
+    filterTodays(){
 
         const completedTasks = this.projectList.reduce((acc, curr) => {
-          const completed = curr.todos.filter(task => task.priority === pr);
+          const completed = curr.todos.filter(task => task.date === new Date().toDateString());
           return acc.concat(completed);
         }, []);
         
         return {name:"today" ,todos:completedTasks}
         
       }
+
+    filterThisWeek(){
+        const thisWeek = this.projectList.reduce((acc,curr)=>{
+            const result = curr.todos.filter(task=> isThisWeek(new Date(task.date)));
+            return acc.concat(result)
+
+        },[])
+
+        return {name:'week',todos:thisWeek}
+    }  
 
  
 }

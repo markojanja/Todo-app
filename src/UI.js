@@ -1,5 +1,5 @@
 import ProjectList from "./ProjectsList";
-import generateTaskList from "./helper";
+import {generateTaskList,resetTasksView} from "./helper";
 
 export default class UI {
   static loadUI() {
@@ -219,8 +219,6 @@ export default class UI {
         let activeProject = UI.projects.selectProject(projectName)
         let taskName = e.target.dataset.value;
         activeProject.deleteTodo(taskName)
-
-        activeProject = obj
         switch (obj.name) {
           case 'all':
             activeProject = UI.projects.getAllTasks()
@@ -229,33 +227,25 @@ export default class UI {
           case 'today':
             activeProject = UI.projects.filterTodays()
             UI.renderTasks(activeProject)
+            break
           case 'week':
             activeProject = UI.projects.filterThisWeek()
-            UI.renderTasks(activeProject)  
+            UI.renderTasks(activeProject)
+            break  
           default:
             activeProject = obj
             UI.renderTasks(activeProject)
             break;
         }
- 
-        UI.renderTasks(activeProject)
       })
     })
   }
 
   static renderAllTasks(){
     const allTasksBtn = document.getElementById('all')
-    const tasks = document.querySelector("#project");
-   
-
+  
     allTasksBtn.addEventListener('click',()=>{
-
-      console.log('all tasks')
-      tasks.innerHTML = ''
-      tasks.innerHTML = `
-      <h1 class='pt'>All</h1>
-      <ul id="taskList"></ul>
-      `;
+      resetTasksView("All")
       let all = UI.projects.getAllTasks()
 
       UI.renderTasks(all)
@@ -266,14 +256,8 @@ export default class UI {
 
   static renderTodaysTasks(){
     const today = document.getElementById('today')
-    const tasks = document.querySelector("#project");
-
     today.addEventListener('click',()=>{
-      tasks.innerHTML = ''
-      tasks.innerHTML = `
-      <h1 class='pt'>Today</h1>
-      <ul id="taskList"></ul>
-      `;
+      resetTasksView("Todays")
       let todays = UI.projects.filterTodays()
       UI.renderTasks(todays)
     })
@@ -281,14 +265,9 @@ export default class UI {
   }
   static renderThisWeek(){
     const weekBtn = document.getElementById('week')
-    const tasks = document.querySelector("#project");
 
     weekBtn.addEventListener('click',()=>{
-      tasks.innerHTML = ''
-      tasks.innerHTML = `
-      <h1 class='pt'>Week</h1>
-      <ul id="taskList"></ul>
-      `;
+      resetTasksView("Week")
       let week = UI.projects.filterThisWeek()
 
       UI.renderTasks(week)

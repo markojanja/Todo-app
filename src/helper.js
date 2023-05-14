@@ -22,4 +22,14 @@ const generateTaskList =(lst)=>{
         
       });
 }
-export default generateTaskList
+
+const resetTasksView = (title) =>{
+  const tasks = document.querySelector("#project");
+  tasks.innerHTML = ''
+  tasks.innerHTML = `
+  <h1 class='pt'>${title}</h1>
+  <ul id="taskList"></ul>
+  `;
+}
+
+export {generateTaskList, resetTasksView}

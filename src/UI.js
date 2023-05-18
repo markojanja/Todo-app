@@ -3,6 +3,7 @@ import {generateTaskList,resetTasksView} from "./helper";
 
 export default class UI {
   static loadUI() {
+   
     UI.createProjectController();
     UI.renderProjectList();
     UI.setActiveProject();
@@ -11,8 +12,13 @@ export default class UI {
     UI.renderTodaysTasks();
     UI.renderThisWeek();
     UI.renderAllTasks();
+
   }
   static projects = new ProjectList();
+
+  static saveToLocalStorage() {
+    localStorage.setItem('ok', JSON.stringify(UI.projects.projectList));
+  }
 
   static toggleFormButtonController() {
     const toggleBtn = document.querySelector(".toggle-form");
@@ -31,6 +37,7 @@ export default class UI {
         const taskName = document.getElementById("projectName");
         if (!taskName.value) return console.log("this is empty");
         UI.projects.addProjects(taskName.value);
+        localStorage.setItem('ok',JSON.stringify(this.projects.projectList))
         const p = UI.projects.selectProject(taskName.value);
         UI.renderProject(p);
         this.renderProjectList();
@@ -58,6 +65,7 @@ export default class UI {
 
           if (!input.value) return console.log("this is empty");
           this.projects.updateProjects(projectName, input.value);
+          localStorage.setItem('ok',JSON.stringify(this.projects.projectList))
           this.renderProjectList();
           if (projectName) {
             projectName = input.value;
@@ -84,6 +92,7 @@ export default class UI {
           this.renderProjectList();
         });
         UI.projects.deleteProjects(projectName);
+        localStorage.setItem('ok',JSON.stringify(this.projects.projectList))
         this.renderProjectList();
       });
     });
@@ -123,6 +132,7 @@ export default class UI {
         () => {
           const projectName = name.textContent;
           const p = UI.projects.selectProject(projectName);
+          localStorage.setItem('ok', JSON.stringify(UI.projects.projectList));
           UI.renderProject(p);
         },
         false
@@ -151,7 +161,7 @@ export default class UI {
     <ul id="taskList"></ul>`;
 
     UI.createTaskConroller();
-    
+
     if (project.todos.length > 0) {
       UI.renderTasks(project)
     }
@@ -164,6 +174,7 @@ export default class UI {
     generateTaskList(obj.todos)
     UI.updateTaskController(obj)
     UI.deleteTaskController(obj)
+    localStorage.setItem('ok', JSON.stringify(UI.projects.projectList));
 
   }
 
@@ -172,6 +183,7 @@ export default class UI {
     const myForm2 = document.getElementById("myForm2");
     const projectName = document.querySelector(".pt").textContent;
     const activeProject = UI.projects.selectProject(projectName);
+    console.log(activeProject)
     myForm2.addEventListener(
       "submit",
       (e) => {
@@ -181,7 +193,7 @@ export default class UI {
         const date = new Date(dt.value).toDateString();
         const priority = document.getElementById('select')    
         activeProject.addTodo(title.value,priority.value,date);
-        // console.log(activeProject)
+        localStorage.setItem('ok',JSON.stringify(this.projects.projectList))
         UI.renderTasks(activeProject);
         myForm2.reset();
        
@@ -201,8 +213,8 @@ export default class UI {
         let activeProject = UI.projects.selectProject(projectName)
         let taskName = e.target.dataset.val
         activeProject.updateStatus(taskName)
+        localStorage.setItem('ok',JSON.stringify(this.projects.projectList))
         activeProject = obj
-        // console.log(activeProject)
         UI.renderTasks(activeProject)
       })
     })
@@ -215,10 +227,11 @@ export default class UI {
     const tasksBtns = document.querySelectorAll('.delete-task')
     tasksBtns.forEach(btn=>{
       btn.addEventListener('click',(e)=>{
-        let projectName = e.target.dataset.keydel
+        let projectName = e.target.dataset.key
         let activeProject = UI.projects.selectProject(projectName)
-        let taskName = e.target.dataset.value;
+        let taskName = e.target.dataset.val;
         activeProject.deleteTodo(taskName)
+        localStorage.setItem('ok',JSON.stringify(this.projects.projectList))
         switch (obj.name) {
           case 'all':
             activeProject = UI.projects.getAllTasks()

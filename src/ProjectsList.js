@@ -1,12 +1,35 @@
 import Project from "./Project"
-import { isThisWeek,parseISO } from "date-fns"
+import Task from "./Task";
+import { isThisWeek } from "date-fns"
 
 
 export default class ProjectList{
-    constructor(){
-        this.projectList = []
-    }
-
+    constructor() {
+        this.projectList = [];
+        const storedProjects = JSON.parse(localStorage.getItem('ok'));
+      
+        if (storedProjects) {
+          storedProjects.forEach(projectData => {
+            const project = new Project(projectData.name);
+      
+            projectData.todos.forEach(todoData => {
+              const task = new Task(todoData.name, todoData.priority, projectData.name, todoData.date);
+              project.todos.push(task);
+            });
+      
+            project.updateStatus = function(title) {
+              this.todos.find(todo => {
+                if (todo.name === title) {
+                  todo.status = !todo.status;
+                }
+              });
+            };
+      
+            this.projectList.push(project);
+          });
+        }
+      }
+      
     addProjects(name){
         const project = new Project(name)
 

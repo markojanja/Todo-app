@@ -1,9 +1,13 @@
 import ProjectList from "./ProjectsList";
-import {generateTaskList,resetTasksView} from "./helper";
+import {generateTaskList,resetTasksView,countTasks} from "./helper";
 
 export default class UI {
   static loadUI() {
-   
+    this.init()
+    this.toggleNav()
+    countTasks('all',UI.projects.getAllTasks())
+    countTasks('today',UI.projects.filterTodays())
+    countTasks('week',UI.projects.filterThisWeek())
     UI.createProjectController();
     UI.renderProjectList();
     UI.setActiveProject();
@@ -12,12 +16,37 @@ export default class UI {
     UI.renderTodaysTasks();
     UI.renderThisWeek();
     UI.renderAllTasks();
-
   }
+  static toggleNav(){
+    const navBtn = document.querySelector('.nav-btn')
+    const sidebar = document.querySelector('.sidebar')
+    navBtn.addEventListener('click',()=>{
+      navBtn.classList.toggle('active')
+      sidebar.classList.toggle('toggle')
+    })
+  }
+
+  static toggleForm2(){
+    const formBtn = document.querySelector('.toggle-form-2')
+    const form = document.querySelector('.form-container')
+      formBtn.addEventListener('click',()=>{
+        form.style.display = 'flex'
+        const clsBtn = document.querySelector('.close-form-btn')
+        const myForm = document.getElementById('myForm2')
+        clsBtn.addEventListener('click',()=>{
+          form.style.display = 'none'
+          myForm.reset()
+        })
+      })
+    
+  }
+
   static projects = new ProjectList();
 
-  static saveToLocalStorage() {
-    localStorage.setItem('ok', JSON.stringify(UI.projects.projectList));
+  static init(){
+    let all = UI.projects.getAllTasks()
+    resetTasksView("All")
+    this.renderTasks(all)
   }
 
   static toggleFormButtonController() {
@@ -55,7 +84,7 @@ export default class UI {
       editButton.addEventListener("click", (e) => {
         const modal = card.querySelector(".modal");
         let projectName = e.target.dataset.value;
-        const input = document.getElementById(`input-${projectName}`);
+        let input = document.getElementById(`input-${projectName}`);
         input.value = projectName;
         modal.style.display = "flex";
 
@@ -67,6 +96,7 @@ export default class UI {
           this.projects.updateProjects(projectName, input.value);
           localStorage.setItem('ok',JSON.stringify(this.projects.projectList))
           this.renderProjectList();
+          console.log(projectName)
           if (projectName) {
             projectName = input.value;
             UI.renderProject(UI.projects.selectProject(projectName));
@@ -94,6 +124,9 @@ export default class UI {
         UI.projects.deleteProjects(projectName);
         localStorage.setItem('ok',JSON.stringify(this.projects.projectList))
         this.renderProjectList();
+        countTasks('all',UI.projects.getAllTasks())
+        countTasks('today',UI.projects.filterTodays())
+        countTasks('week',UI.projects.filterThisWeek())
       });
     });
   }
@@ -102,6 +135,7 @@ export default class UI {
   static renderProjectList() {
     
     const list = document.getElementById("list");
+    
     list.innerHTML = "";
     UI.projects.projectList.map((project) => {
       list.innerHTML += `
@@ -141,25 +175,35 @@ export default class UI {
   }
 
   static renderProject(project) {
+
     const tasks = document.querySelector("#project");
     tasks.innerHTML = "";
-    tasks.innerHTML = `<h1 class='pt'>${project.name}</h1>`;
+    tasks.innerHTML = `
+    <h1 class='pt'>${project.name}</h1>
+    <button class="toggle-form-2"><i class="fa-sharp fa-solid fa-plus"></i></button>
+    `;
     tasks.innerHTML += `
+    <div class="form-container">
+    <div class="form-title">
+    <h2>Add new task</h2>
+    <button class="close-form-btn">X</button>
+    </div>
     <form action="" id="myForm2" autocomplete="off">
-      <label for="project">Enter task name</label>
-      <input type="text" name="project" id="taskName2" required>
-      <label for="date">Pick date</label>
-      <input type="date" name="date" id="taskDate" required>
-      <label for="priority">Choose priority</label>
-        <select id="select" name="priority">
+      <label for="taskName2">Task name</label>
+      <input type="text" name="taskName2" id="taskName2" required>
+      <label for="taskDate">Date</label>
+      <input type="date" name="taskDate" id="taskDate" required>
+      <label for="select">Priority</label>
+        <select id="select" name="select">
           <option value="normal">normal</option>
           <option value="high">high</option>
           <option value="low">low</option>
         </select>
       <button type="submit" id="btn"></button>
     </form>
+    </div>
     <ul id="taskList"></ul>`;
-
+    UI.toggleForm2()
     UI.createTaskConroller();
 
     if (project.todos.length > 0) {
@@ -183,6 +227,7 @@ export default class UI {
     const myForm2 = document.getElementById("myForm2");
     const projectName = document.querySelector(".pt").textContent;
     const activeProject = UI.projects.selectProject(projectName);
+    const form = document.querySelector('.form-container')
     console.log(activeProject)
     myForm2.addEventListener(
       "submit",
@@ -195,7 +240,12 @@ export default class UI {
         activeProject.addTodo(title.value,priority.value,date);
         localStorage.setItem('ok',JSON.stringify(this.projects.projectList))
         UI.renderTasks(activeProject);
+        UI.renderProjectList()
         myForm2.reset();
+        form.style.display = 'none'
+        countTasks('all',UI.projects.getAllTasks())
+        countTasks('today',UI.projects.filterTodays())
+        countTasks('week',UI.projects.filterThisWeek())
        
       }
     );
@@ -203,19 +253,20 @@ export default class UI {
   }
   // updateTask
   static updateTaskController(obj) {
-
     const statusBtns = document.querySelectorAll('.status-btn')
 
     statusBtns.forEach(btn=>{
 
       btn.addEventListener('click',(e)=>{
         let projectName = e.target.dataset.key
+
         let activeProject = UI.projects.selectProject(projectName)
         let taskName = e.target.dataset.val
         activeProject.updateStatus(taskName)
         localStorage.setItem('ok',JSON.stringify(this.projects.projectList))
         activeProject = obj
         UI.renderTasks(activeProject)
+       
       })
     })
    
@@ -250,18 +301,24 @@ export default class UI {
             UI.renderTasks(activeProject)
             break;
         }
+        countTasks('all',UI.projects.getAllTasks())
+        countTasks('today',UI.projects.filterTodays())
+        countTasks('week',UI.projects.filterThisWeek())
       })
     })
   }
 
   static renderAllTasks(){
     const allTasksBtn = document.getElementById('all')
-  
+    
     allTasksBtn.addEventListener('click',()=>{
+      
       resetTasksView("All")
       let all = UI.projects.getAllTasks()
+      countTasks('all',all)
 
       UI.renderTasks(all)
+      UI.renderProjectList()
     })
 
   }
@@ -272,6 +329,7 @@ export default class UI {
     today.addEventListener('click',()=>{
       resetTasksView("Todays")
       let todays = UI.projects.filterTodays()
+      countTasks('today',todays)
       UI.renderTasks(todays)
     })
 

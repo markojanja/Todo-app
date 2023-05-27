@@ -20,6 +20,7 @@ export default class Project{
         this.todos.find(todo=>{
             if(todo.name===title){
                todo.status = !todo.status
+               
             }
         })
     }

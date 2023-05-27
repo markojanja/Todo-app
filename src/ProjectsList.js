@@ -1,6 +1,6 @@
 import Project from "./Project"
 import Task from "./Task";
-import { isThisWeek } from "date-fns"
+import { isThisWeek,isToday } from "date-fns"
 
 
 export default class ProjectList{
@@ -45,6 +45,9 @@ export default class ProjectList{
         const project = this.projectList.find(project=>{
             return projectName === project.name
         })
+        project.todos.forEach(todo=>{
+          todo.projectKey = newProjectName
+        })
         project.name = newProjectName       
         return project
     }
@@ -69,7 +72,7 @@ export default class ProjectList{
     filterTodays(){
 
         const completedTasks = this.projectList.reduce((acc, curr) => {
-          const completed = curr.todos.filter(task => task.date === new Date().toDateString());
+          const completed = curr.todos.filter(task => isToday(new Date(task.date)));
           return acc.concat(completed);
         }, []);
         

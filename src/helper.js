@@ -12,7 +12,7 @@ const generateTaskList = (lst) => {
     taskList.innerHTML += `
           <li class="task-card p-${todo.priority}">
             <button class="status-btn ${taskDone}" data-val="${todo.name}" data-key="${todo.projectKey}"></button>
-            <p class="ptt" >${todo.name}</p><span class="date">${todo.date}</span>
+            <p class="ptt" >${todo.name} (${todo.projectKey})</p><span class="date">${todo.date}</span>
             <button class="delete-task" data-val="${todo.name}" data-key="${todo.projectKey}"></button>
           </li>`;
   });

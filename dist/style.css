@@ -1,9 +1,10 @@
 :root {
-  --primary-clr: #0f172a;
-  --font-clr: #f1f5f9;
-  --sec-clr: #22d3ee;
-  --sec-clr-2: #1e293b;
-  --clr-blur: rgba(15, 23, 42, 0.8);
+  --primary-clr:rgb(248, 245, 250);
+  --font-clr:rgb(RGB: 3, 2, 3);
+  --sec-clr:rgb(157, 114, 177);
+  --sec-clr-2:rgb(241, 235, 244);
+  --clr-blur:rgba(248, 245, 250,0.8);
+  --accent-clr:rgb(168, 130, 186);
 }
 
 * {
@@ -148,10 +149,11 @@ body {
   height: 3px;
   width: 100%;
   border-radius: 3px;
-  background-color: var(--font-clr);
+  background-color: var(--accent-clr);
   margin: 5px auto;
   transition: all 0.1s ease-in;
 }
+
 
 /* sidebar */
 .sidebar {
@@ -244,8 +246,9 @@ body {
 .close-form-btn {
   outline: none;
   border: none;
-  background-color: var(--sec-clr-2);
-  color: var(--sec-clr);
+  background-color: var(--sec-clr);
+  color: var(--sec-clr-2);
+  font-size: 1.4rem;
 }
 .toggle-form {
   cursor: pointer;
@@ -255,6 +258,10 @@ body {
   border: 3px solid var(--sec-clr);
   padding: 20px;
   border-radius: 50%;
+}
+#myForm2 button{
+  font-size: 1.6rem!important;
+  font-weight: 900!important;
 }
 
 /* forms */
@@ -277,10 +284,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: var(--sec-clr-2);
+  background-color: var(--sec-clr);
   padding: 10px;
   width: 100%;
-  color: var(--sec-clr);
+  color: var(--sec-clr-2);
+  border: 1px solid var(--accent-clr);
+  border-bottom: none;
 }
 
 #myForm {
@@ -320,6 +329,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 5px;
   font-size: 18px;
   font-weight: 400;
+  
 }
 .status-btn::after {
   content: "\f111";
@@ -339,7 +349,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   gap: 10px;
   width: 100%;
   background-color: var(--primary-clr);
-  border: 1px solid var(--sec-clr-2);
+  border: 1px solid var(--accent-clr);
   padding: 15px 0;
 }
 

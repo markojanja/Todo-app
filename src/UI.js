@@ -186,7 +186,7 @@ export default class UI {
     <div class="form-container">
     <div class="form-title">
     <h2>Add new task</h2>
-    <button class="close-form-btn">X</button>
+    <button class="close-form-btn"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <form action="" id="myForm2" autocomplete="off">
       <label for="taskName2">Task name</label>

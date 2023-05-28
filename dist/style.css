@@ -87,6 +87,7 @@ body {
 .date {
   font-size: 10px;
   color: var(--font-clr);
+  margin-right: 1rem;
 }
 .project {
   display: flex;
@@ -100,12 +101,13 @@ body {
   position: relative;
   display: flex;
   align-items: center;
-  background-color: var(--sec-clr-2);
+  background:var(--accent-clr);
   padding: 50px;
   width: 80%;
   margin: 10px;
   justify-content: center;
   border-radius: 15px;
+  color: var(--primary-clr);
 }
 .ptt {
   flex: 1;
@@ -141,6 +143,7 @@ body {
 }
 .nav-btn {
   display: none;
+  cursor: pointer;
   width: 25px;
   background-color: var(--sec-clr-2);
 }
@@ -314,7 +317,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-radius: 4px;
   margin-right: 2px;
   opacity: 0.6;
-  filter: invert(1);
 }
 
 .status-btn,
@@ -338,7 +340,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   content: "\f058";
 }
 .delete-task::after {
-  content: "\f410";
+  content: "\f057";
 }
 
 #myForm2 {

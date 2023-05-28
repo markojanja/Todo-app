@@ -16,13 +16,38 @@ export default class UI {
     UI.renderTodaysTasks();
     UI.renderThisWeek();
     UI.renderAllTasks();
+    UI.closeNav();
   }
   static toggleNav(){
     const navBtn = document.querySelector('.nav-btn')
     const sidebar = document.querySelector('.sidebar')
+
     navBtn.addEventListener('click',()=>{
       navBtn.classList.toggle('active')
       sidebar.classList.toggle('toggle')
+    })
+
+
+  }
+
+  static closeNav(){
+    const navBtn = document.querySelector('.nav-btn')
+    const sidebar = document.querySelector('.sidebar')
+    const upperLinks = document.querySelectorAll('.project-link-upper')
+    const projectLinks = document.querySelectorAll('.title')
+
+    upperLinks.forEach(link=>{
+      link.addEventListener('click',()=>{
+        navBtn.classList.remove('active')
+        sidebar.classList.remove('toggle')
+      })
+    })
+
+    projectLinks.forEach(link=>{
+      link.addEventListener('click',()=>{
+        navBtn.classList.toggle('active')
+        sidebar.classList.toggle('toggle')
+      })
     })
   }
 
@@ -64,7 +89,7 @@ export default class UI {
       (e) => {
         e.preventDefault();
         const taskName = document.getElementById("projectName");
-        if (!taskName.value) return console.log("this is empty");
+        // if (!taskName.value) return console.log("this is empty");
         UI.projects.addProjects(taskName.value);
         localStorage.setItem('ok',JSON.stringify(this.projects.projectList))
         const p = UI.projects.selectProject(taskName.value);
@@ -87,16 +112,14 @@ export default class UI {
         let input = document.getElementById(`input-${projectName}`);
         input.value = projectName;
         modal.style.display = "flex";
-
         UI.renderProject(UI.projects.selectProject(projectName));
         modal.addEventListener("submit", (e) => {
           e.preventDefault();
-
-          if (!input.value) return console.log("this is empty");
+          if (!input.value) return 
           this.projects.updateProjects(projectName, input.value);
           localStorage.setItem('ok',JSON.stringify(this.projects.projectList))
           this.renderProjectList();
-          console.log(projectName)
+          // console.log(projectName)
           if (projectName) {
             projectName = input.value;
             UI.renderProject(UI.projects.selectProject(projectName));
@@ -185,7 +208,7 @@ export default class UI {
     tasks.innerHTML += `
     <div class="form-container">
     <div class="form-title">
-    <h2>Add new task</h2>
+    <h2>New task</h2>
     <button class="close-form-btn"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <form action="" id="myForm2" autocomplete="off">
@@ -204,6 +227,7 @@ export default class UI {
     </div>
     <ul id="taskList"></ul>`;
     UI.toggleForm2()
+    UI.closeNav()
     UI.createTaskConroller();
 
     if (project.todos.length > 0) {
@@ -228,7 +252,7 @@ export default class UI {
     const projectName = document.querySelector(".pt").textContent;
     const activeProject = UI.projects.selectProject(projectName);
     const form = document.querySelector('.form-container')
-    console.log(activeProject)
+    // console.log(activeProject)
     myForm2.addEventListener(
       "submit",
       (e) => {

@@ -17,16 +17,17 @@ export default class UI {
     UI.renderThisWeek();
     UI.renderAllTasks();
     UI.closeNav();
+    UI.closeNav2()
   }
   static toggleNav(){
     const navBtn = document.querySelector('.nav-btn')
     const sidebar = document.querySelector('.sidebar')
-
+    const scr  = window.matchMedia("(max-width: 768px)")
+    if (scr.matches===false) return
     navBtn.addEventListener('click',()=>{
       navBtn.classList.toggle('active')
       sidebar.classList.toggle('toggle')
     })
-
 
   }
 
@@ -34,8 +35,8 @@ export default class UI {
     const navBtn = document.querySelector('.nav-btn')
     const sidebar = document.querySelector('.sidebar')
     const upperLinks = document.querySelectorAll('.project-link-upper')
-    const projectLinks = document.querySelectorAll('.title')
-
+    const scr  = window.matchMedia("(max-width: 768px)")
+    if (scr.matches===false) return
     upperLinks.forEach(link=>{
       link.addEventListener('click',()=>{
         navBtn.classList.remove('active')
@@ -43,10 +44,18 @@ export default class UI {
       })
     })
 
+
+  }
+
+  static closeNav2(){
+    const navBtn = document.querySelector('.nav-btn')
+    const sidebar = document.querySelector('.sidebar')
+    // const upperLinks = document.querySelectorAll('.project-link-upper')
+    const projectLinks = document.querySelectorAll('.title')
     projectLinks.forEach(link=>{
       link.addEventListener('click',()=>{
-        navBtn.classList.toggle('active')
-        sidebar.classList.toggle('toggle')
+        navBtn.classList.remove('active')
+        sidebar.classList.remove('toggle')
       })
     })
   }
@@ -179,6 +188,8 @@ export default class UI {
   
     this.UpdateProjectController();
     this.deleteProjectController();
+    UI.closeNav()
+    UI.closeNav2()
   }
 
   static setActiveProject() {
@@ -198,7 +209,6 @@ export default class UI {
   }
 
   static renderProject(project) {
-
     const tasks = document.querySelector("#project");
     tasks.innerHTML = "";
     tasks.innerHTML = `
@@ -227,11 +237,12 @@ export default class UI {
     </div>
     <ul id="taskList"></ul>`;
     UI.toggleForm2()
-    UI.closeNav()
+
     UI.createTaskConroller();
 
     if (project.todos.length > 0) {
       UI.renderTasks(project)
+      
     }
    
   }
@@ -243,7 +254,6 @@ export default class UI {
     UI.updateTaskController(obj)
     UI.deleteTaskController(obj)
     localStorage.setItem('ok', JSON.stringify(UI.projects.projectList));
-
   }
 
   //add task form handler

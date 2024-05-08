@@ -1,23 +1,16 @@
 import ProjectList from './ProjectsList';
+import UIEventHandler from './UIEventHandlers';
+
 import { generateTaskList, resetTasksView, countTasks } from './helper';
 
 export default class UI {
   static loadUI() {
     UI.init();
-    UI.toggleNav();
-    UI.createProjectController();
+    UI.render();
     UI.renderProjectList();
-    UI.setActiveProject();
-    UI.UpdateProjectController();
-    UI.toggleFormButtonController();
-    UI.renderTodaysTasks();
-    UI.renderThisWeek();
-    UI.renderAllTasks();
-    UI.closeSidebar();
-    UI.closeSidebar2();
-    countTasks('all', UI.projects.getAllTasks());
-    countTasks('today', UI.projects.filterTodays());
-    countTasks('week', UI.projects.filterThisWeek());
+    UIEventHandler.closeSidebar();
+    UIEventHandler.toggleNav();
+    UIEventHandler.toggleFormButtonController();
   }
 
   static init() {
@@ -26,71 +19,24 @@ export default class UI {
     this.renderTasks(all);
   }
 
-  static toggleFormButtonController() {
-    const toggleBtn = document.querySelector('.toggle-form');
-    toggleBtn.addEventListener('click', () => {
-      const form = document.getElementById('myForm');
-      form.classList.toggle('show');
-    });
-  }
-
-  static toggleNav() {
-    const navBtn = document.querySelector('.nav-btn');
-    const sidebar = document.querySelector('.sidebar');
-    const scr = window.matchMedia('(max-width: 768px)');
-    if (scr.matches === false) return;
-    navBtn.addEventListener('click', () => {
-      navBtn.classList.toggle('active');
-      sidebar.classList.toggle('toggle');
-    });
-  }
-
-  static closeSidebar() {
-    const navBtn = document.querySelector('.nav-btn');
-    const sidebar = document.querySelector('.sidebar');
-    const upperLinks = document.querySelectorAll('.project-link-upper');
-    const scr = window.matchMedia('(max-width: 768px)');
-    if (scr.matches === false) return;
-    upperLinks.forEach((link) => {
-      link.addEventListener('click', () => {
-        navBtn.classList.remove('active');
-        sidebar.classList.remove('toggle');
-      });
-    });
-  }
-
-  static closeSidebar2() {
-    const navBtn = document.querySelector('.nav-btn');
-    const sidebar = document.querySelector('.sidebar');
-    // const upperLinks = document.querySelectorAll('.project-link-upper')
-    const projectLinks = document.querySelectorAll('.title');
-    projectLinks.forEach((link) => {
-      link.addEventListener('click', () => {
-        navBtn.classList.remove('active');
-        sidebar.classList.remove('toggle');
-      });
-    });
-  }
-
-  static toggleForm2() {
-    const formBtn = document.querySelector('.toggle-form-2');
-    const form = document.querySelector('.form-container');
-    formBtn.addEventListener('click', () => {
-      form.style.display = 'flex';
-      const clsBtn = document.querySelector('.close-form-btn');
-      const myForm = document.getElementById('myForm2');
-      clsBtn.addEventListener('click', () => {
-        form.style.display = 'none';
-        myForm.reset();
-      });
-    });
+  static render() {
+    const projects = UI.projects;
+    UI.createProjectController();
+    UI.setActiveProject();
+    UI.UpdateProjectController();
+    UI.renderTodaysTasks();
+    UI.renderThisWeek();
+    UI.renderAllTasks();
+    countTasks('all', projects.getAllTasks());
+    countTasks('today', projects.filterTodays());
+    countTasks('week', projects.filterThisWeek());
   }
 
   static projects = new ProjectList();
 
   static createProjectController() {
-    const myForm = document.getElementById('myForm');
-    myForm.addEventListener(
+    const projectForm = document.getElementById('projectForm');
+    projectForm.addEventListener(
       'submit',
       (e) => {
         e.preventDefault();
@@ -101,8 +47,8 @@ export default class UI {
         const p = UI.projects.selectProject(taskName.value);
         UI.renderProject(p);
         this.renderProjectList();
-        myForm.reset();
-        myForm.classList.remove('show');
+        projectForm.reset();
+        projectForm.classList.remove('show');
       },
       false
     );
@@ -147,6 +93,7 @@ export default class UI {
     deleteButtons.forEach((button) => {
       button.addEventListener('click', (e) => {
         const projectName = e.target.dataset.value;
+        console.log(projectName);
         UI.projects.projectList.forEach((proj) => {
           if (proj !== projectName) tasks.innerHTML = 'Project Deleted';
           this.renderProjectList();
@@ -169,9 +116,9 @@ export default class UI {
       list.innerHTML += `
       <li class="project-link">
         <div class="link-container">
-          <h3 class="title">${project.name}</h3>
-          <button class="btn-edit" type="button" data-value="${project.name}"><i class="fa-solid fa-pen" data-value="${project.name}"></i></button>
-          <button class="btn-delete" type="button" data-value="${project.name}"><i class="fa-solid fa-trash"></i></button>
+          <p class="title">${project.name}</p>
+          <button class="btn-edit" type="button"><i class="fa-solid fa-pen" data-value="${project.name}"></i></button>
+          <button class="btn-delete" type="button"><i class="fa-solid fa-trash" data-value="${project.name}"></i></button>
         </div>
 
         <form class="modal">
@@ -185,8 +132,7 @@ export default class UI {
 
     this.UpdateProjectController();
     this.deleteProjectController();
-    UI.closeSidebar();
-    UI.closeSidebar2();
+    UIEventHandler.closeSidebar();
   }
 
   static setActiveProject() {
@@ -218,7 +164,7 @@ export default class UI {
     <h2>New task</h2>
     <button class="close-form-btn"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <form action="" id="myForm2" autocomplete="off">
+    <form action="" id="taskForm" autocomplete="off">
       <label for="taskName2">Task name</label>
       <input type="text" name="taskName2" id="taskName2" required>
       <label for="taskDate">Date</label>
@@ -233,7 +179,7 @@ export default class UI {
     </form>
     </div>
     <ul id="taskList"></ul>`;
-    UI.toggleForm2();
+    UIEventHandler.toggleForm2();
 
     UI.createTaskConroller();
 
@@ -252,12 +198,11 @@ export default class UI {
   // add task form handler
 
   static createTaskConroller() {
-    const myForm2 = document.getElementById('myForm2');
+    const taskForm = document.getElementById('taskForm');
     const projectName = document.querySelector('.pt').textContent;
     const activeProject = UI.projects.selectProject(projectName);
     const form = document.querySelector('.form-container');
-    // console.log(activeProject)
-    myForm2.addEventListener('submit', (e) => {
+    taskForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const title = document.getElementById('taskName2');
       const dt = document.getElementById('taskDate');
@@ -267,7 +212,7 @@ export default class UI {
       localStorage.setItem('ok', JSON.stringify(this.projects.projectList));
       UI.renderTasks(activeProject);
       UI.renderProjectList();
-      myForm2.reset();
+      taskForm.reset();
       form.style.display = 'none';
       countTasks('all', UI.projects.getAllTasks());
       countTasks('today', UI.projects.filterTodays());
@@ -285,7 +230,9 @@ export default class UI {
 
         let activeProject = UI.projects.selectProject(projectName);
         const taskName = e.target.dataset.val;
+        console.log(taskName);
         activeProject.updateStatus(taskName);
+
         localStorage.setItem('ok', JSON.stringify(this.projects.projectList));
         activeProject = obj;
         UI.renderTasks(activeProject);

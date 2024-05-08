@@ -1,8 +1,3 @@
-import UI from "./UI"
+import UI from './UI';
 
-
-document.addEventListener('DOMContentLoaded',UI.loadUI())
-
-
-
-
+document.addEventListener('DOMContentLoaded', UI.loadUI());

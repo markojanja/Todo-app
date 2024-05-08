@@ -1,10 +1,10 @@
 :root {
-  --primary-clr:rgb(248, 245, 250);
-  --font-clr:rgb(RGB: 3, 2, 3);
-  --sec-clr:rgb(157, 114, 177);
-  --sec-clr-2:rgb(241, 235, 244);
-  --clr-blur:rgba(248, 245, 250,0.8);
-  --accent-clr:rgb(168, 130, 186);
+  --primary-clr: #0a0a0a;
+  --font-clr: #ffff;
+  --sec-clr: #831843;
+  --sec-clr-2: #171717;
+  --clr-blur: rgba(23, 23, 23, 0.7);
+  --accent-clr: #831843;
 }
 
 * {
@@ -101,13 +101,13 @@ body {
   position: relative;
   display: flex;
   align-items: center;
-  background:var(--accent-clr);
+  background: var(--accent-clr);
   padding: 50px;
   width: 80%;
   margin: 10px;
   justify-content: center;
   border-radius: 15px;
-  color: var(--primary-clr);
+  color: var(--font-clr);
 }
 .ptt {
   flex: 1;
@@ -136,10 +136,10 @@ body {
   position: relative;
   padding: 20px;
   background-color: var(--sec-clr-2);
-  opacity: 0.8;
 }
 .nav-logo {
   color: var(--sec-clr);
+  font-weight: 900;
 }
 .nav-btn {
   display: none;
@@ -156,7 +156,6 @@ body {
   margin: 5px auto;
   transition: all 0.1s ease-in;
 }
-
 
 /* sidebar */
 .sidebar {
@@ -262,9 +261,9 @@ body {
   padding: 20px;
   border-radius: 50%;
 }
-#myForm2 button{
-  font-size: 1.6rem!important;
-  font-weight: 900!important;
+#taskForm button {
+  font-size: 1.6rem !important;
+  font-weight: 900 !important;
 }
 
 /* forms */
@@ -295,14 +294,19 @@ body {
   border-bottom: none;
 }
 
-#myForm {
+.form-title h2,
+.form-title i {
+  color: var(--font-clr);
+}
+
+#taskForm {
   display: none;
   width: 100%;
 }
 
-#myForm input,
+#projectForm input,
 .modal input,
-#myForm2 input {
+#taskForm input {
   background-color: var(--primary-clr);
   border: none;
   outline: none;
@@ -312,18 +316,19 @@ body {
   font-size: 1.1rem;
   width: 90%;
 }
-input[type="date"]::-webkit-calendar-picker-indicator {
+input[type='date']::-webkit-calendar-picker-indicator {
   cursor: pointer;
   border-radius: 4px;
   margin-right: 2px;
   opacity: 0.6;
+  filter: invert(1);
 }
 
 .status-btn,
 .st-done,
 .delete-task,
-#myForm2 button {
-  font-family: "Font Awesome 5 Free";
+#taskForm button {
+  font-family: 'Font Awesome 5 Free';
   background: none;
   outline: none;
   border: none;
@@ -331,19 +336,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 5px;
   font-size: 18px;
   font-weight: 400;
-  
 }
 .status-btn::after {
-  content: "\f111";
+  content: '\f111';
 }
 .st-done::after {
-  content: "\f058";
+  content: '\f058';
 }
 .delete-task::after {
-  content: "\f057";
+  content: '\f057';
 }
 
-#myForm2 {
+#taskForm {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -362,13 +366,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: var(--sec-clr);
   font-size: 2rem;
 }
-#myForm2 button {
+#taskForm button {
   position: relative;
   display: block;
 }
-#myForm2 button::after {
-  font-family: "Font Awesome 5 Free";
-  content: "\2b";
+#taskForm button::after {
+  font-family: 'Font Awesome 5 Free';
+  content: '\2b';
 }
 
 select {
@@ -390,6 +394,9 @@ select option {
   background-color: var(--primary-clr);
   color: var(--font-clr);
   font-size: 16px;
+}
+#projectForm {
+  display: none;
 }
 
 /* media queries */

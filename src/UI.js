@@ -1,9 +1,13 @@
+import Storage from './Storage';
+import TaskRenderer from './UITaskRenderer';
 import ProjectList from './ProjectsList';
 import UIEventHandler from './UIEventHandlers';
 
-import { generateTaskList, resetTasksView, countTasks } from './helper';
+import { resetTasksView, countTasks } from './helper';
 
 export default class UI {
+  static projects = new ProjectList();
+
   static loadUI() {
     UI.init();
     UI.render();
@@ -16,7 +20,7 @@ export default class UI {
   static init() {
     const all = UI.projects.getAllTasks();
     resetTasksView('All');
-    this.renderTasks(all);
+    TaskRenderer.render(all, UI.updateTaskController, UI.deleteTaskController);
   }
 
   static render() {
@@ -24,15 +28,13 @@ export default class UI {
     UI.createProjectController();
     UI.setActiveProject();
     UI.UpdateProjectController();
-    UI.renderTodaysTasks();
-    UI.renderThisWeek();
-    UI.renderAllTasks();
+    TaskRenderer.renderAllTasks(UI.projects.getAllTasks(), UI.updateTaskController, UI.deleteTaskController);
+    TaskRenderer.renderTodaysTasks(UI.projects.filterTodays(), UI.updateTaskController, UI.deleteTaskController);
+    TaskRenderer.renderThisWeek(UI.projects.filterThisWeek(), UI.updateTaskController, UI.deleteTaskController);
     countTasks('all', projects.getAllTasks());
     countTasks('today', projects.filterTodays());
     countTasks('week', projects.filterThisWeek());
   }
-
-  static projects = new ProjectList();
 
   static createProjectController() {
     const projectForm = document.getElementById('projectForm');
@@ -41,9 +43,8 @@ export default class UI {
       (e) => {
         e.preventDefault();
         const taskName = document.getElementById('projectName');
-        // if (!taskName.value) return console.log("this is empty");
         UI.projects.addProjects(taskName.value);
-        localStorage.setItem('ok', JSON.stringify(this.projects.projectList));
+        Storage.setStorage(UI.projects.projectList);
         const p = UI.projects.selectProject(taskName.value);
         UI.renderProject(p);
         this.renderProjectList();
@@ -69,10 +70,9 @@ export default class UI {
         modal.addEventListener('submit', () => {
           e.preventDefault();
           if (!input.value) return;
-          this.projects.updateProjects(projectName, input.value);
-          localStorage.setItem('ok', JSON.stringify(this.projects.projectList));
-          this.renderProjectList();
-          // console.log(projectName)
+          UI.projects.updateProjects(projectName, input.value);
+          Storage.setStorage(this.projects.projectList);
+          UI.renderProjectList();
           if (projectName) {
             projectName = input.value;
             UI.renderProject(UI.projects.selectProject(projectName));
@@ -99,8 +99,9 @@ export default class UI {
           this.renderProjectList();
         });
         UI.projects.deleteProjects(projectName);
-        localStorage.setItem('ok', JSON.stringify(this.projects.projectList));
-        this.renderProjectList();
+        Storage.setStorage(this.projects.projectList);
+        // localStorage.setItem('ok', JSON.stringify(this.projects.projectList));
+        UI.renderProjectList();
         countTasks('all', UI.projects.getAllTasks());
         countTasks('today', UI.projects.filterTodays());
         countTasks('week', UI.projects.filterThisWeek());
@@ -142,9 +143,9 @@ export default class UI {
         'click',
         () => {
           const projectName = name.textContent;
-          const p = UI.projects.selectProject(projectName);
-          localStorage.setItem('ok', JSON.stringify(UI.projects.projectList));
-          UI.renderProject(p);
+          const project = UI.projects.selectProject(projectName);
+          Storage.setStorage(UI.projects.projectList);
+          UI.renderProject(project);
         },
         false
       );
@@ -184,24 +185,15 @@ export default class UI {
     UI.createTaskConroller();
 
     if (project.todos.length > 0) {
-      UI.renderTasks(project);
+      TaskRenderer.render(project, UI.updateTaskController, UI.deleteTaskController);
     }
   }
-
-  static renderTasks(obj) {
-    generateTaskList(obj.todos);
-    UI.updateTaskController(obj);
-    UI.deleteTaskController(obj);
-    localStorage.setItem('ok', JSON.stringify(UI.projects.projectList));
-  }
-
-  // add task form handler
 
   static createTaskConroller() {
     const taskForm = document.getElementById('taskForm');
     const projectName = document.querySelector('.pt').textContent;
-    const activeProject = UI.projects.selectProject(projectName);
     const form = document.querySelector('.form-container');
+    const activeProject = UI.projects.selectProject(projectName);
     taskForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const title = document.getElementById('taskName2');
@@ -209,8 +201,8 @@ export default class UI {
       const date = new Date(dt.value).toDateString();
       const priority = document.getElementById('select');
       activeProject.addTodo(title.value, priority.value, date);
-      localStorage.setItem('ok', JSON.stringify(this.projects.projectList));
-      UI.renderTasks(activeProject);
+      Storage.setStorage(UI.projects.projectList);
+      TaskRenderer.render(activeProject, UI.updateTaskController, UI.deleteTaskController);
       UI.renderProjectList();
       taskForm.reset();
       form.style.display = 'none';
@@ -219,7 +211,6 @@ export default class UI {
       countTasks('week', UI.projects.filterThisWeek());
     });
   }
-  // updateTask
 
   static updateTaskController(obj) {
     const statusBtns = document.querySelectorAll('.status-btn');
@@ -232,10 +223,9 @@ export default class UI {
         const taskName = e.target.dataset.val;
         console.log(taskName);
         activeProject.updateStatus(taskName);
-
-        localStorage.setItem('ok', JSON.stringify(this.projects.projectList));
+        Storage.setStorage(UI.projects.projectList);
         activeProject = obj;
-        UI.renderTasks(activeProject);
+        TaskRenderer.render(activeProject, UI.updateTaskController, UI.deleteTaskController);
       });
     });
   }
@@ -249,63 +239,29 @@ export default class UI {
         let activeProject = UI.projects.selectProject(projectName);
         const taskName = e.target.dataset.val;
         activeProject.deleteTodo(taskName);
-        localStorage.setItem('ok', JSON.stringify(this.projects.projectList));
+        Storage.setStorage(UI.projects.projectList);
         switch (obj.name) {
           case 'all':
             activeProject = UI.projects.getAllTasks();
-            UI.renderTasks(activeProject);
+            TaskRenderer.render(activeProject, UI.updateTaskController, UI.deleteTaskController);
             break;
           case 'today':
             activeProject = UI.projects.filterTodays();
-            UI.renderTasks(activeProject);
+            TaskRenderer.render(activeProject, UI.updateTaskController, UI.deleteTaskController);
             break;
           case 'week':
             activeProject = UI.projects.filterThisWeek();
-            UI.renderTasks(activeProject);
+            TaskRenderer.render(activeProject, UI.updateTaskController, UI.deleteTaskController);
             break;
           default:
             activeProject = obj;
-            UI.renderTasks(activeProject);
+            TaskRenderer.render(activeProject, UI.updateTaskController, UI.deleteTaskController);
             break;
         }
         countTasks('all', UI.projects.getAllTasks());
         countTasks('today', UI.projects.filterTodays());
         countTasks('week', UI.projects.filterThisWeek());
       });
-    });
-  }
-
-  static renderAllTasks() {
-    const allTasksBtn = document.getElementById('all');
-
-    allTasksBtn.addEventListener('click', () => {
-      resetTasksView('All');
-      const all = UI.projects.getAllTasks();
-      countTasks('all', all);
-      UI.renderTasks(all);
-      UI.renderProjectList();
-    });
-  }
-
-  static renderTodaysTasks() {
-    const today = document.getElementById('today');
-    today.addEventListener('click', () => {
-      resetTasksView('Todays');
-      const todays = UI.projects.filterTodays();
-      countTasks('today', todays);
-      UI.renderTasks(todays);
-    });
-  }
-
-  static renderThisWeek() {
-    const weekBtn = document.getElementById('week');
-
-    weekBtn.addEventListener('click', () => {
-      resetTasksView('Week');
-      let week = UI.projects.filterThisWeek();
-
-      UI.renderTasks(week);
-      week = UI.projects.filterThisWeek();
     });
   }
 }

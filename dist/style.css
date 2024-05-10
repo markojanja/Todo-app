@@ -431,4 +431,7 @@ select option {
   .wrapper {
     min-height: 100vh;
   }
+  #project {
+    width: 100%;
+  }
 }

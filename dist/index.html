@@ -42,10 +42,30 @@
         </form>
         <ul class="project-list" id="list"></ul>
       </aside>
-      <div class="main">
+      <main class="main">
+        <div class="form-container">
+          <div class="form-title">
+            <h2>New task</h2>
+            <button class="close-form-btn"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <form action="" id="taskForm" autocomplete="off">
+            <label for="taskName2">Task name</label>
+            <input type="text" name="taskName2" id="taskName2" required />
+            <label for="taskDate">Date</label>
+            <input type="date" name="taskDate" id="taskDate" required />
+            <label for="select">Priority</label>
+            <select id="select" name="select">
+              <option value="normal">normal</option>
+              <option value="high">high</option>
+              <option value="low">low</option>
+            </select>
+            <button type="submit" id="btn"></button>
+          </form>
+        </div>
         <div class="project" id="project"></div>
-      </div>
+      </main>
     </div>
+
     <script src="main.js"></script>
   </body>
 </html>

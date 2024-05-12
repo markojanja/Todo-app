@@ -21,33 +21,50 @@ export default class UI {
     UI.setActiveProject();
     UI.UpdateProjectController();
     resetTasksView('All');
-    TaskRenderer.render(UI.projects.getAllTasks(), UI.updateTaskController, UI.deleteTaskController);
+    TaskRenderer.render(
+      UI.projects.getAllTasks(),
+      UI.updateTaskController,
+      UI.deleteTaskController
+    );
   }
 
   static render() {
-    TaskRenderer.renderAllTasks(UI.projects.getAllTasks(), UI.updateTaskController, UI.deleteTaskController);
-    TaskRenderer.renderTodaysTasks(UI.projects.filterTodays(), UI.updateTaskController, UI.deleteTaskController);
-    TaskRenderer.renderThisWeek(UI.projects.filterThisWeek(), UI.updateTaskController, UI.deleteTaskController);
-    TaskRenderer.countTasksByTag(UI.projects.getAllTasks(), UI.projects.filterTodays(), UI.projects.filterThisWeek());
+    TaskRenderer.renderAllTasks(
+      UI.projects.getAllTasks(),
+      UI.updateTaskController,
+      UI.deleteTaskController
+    );
+    TaskRenderer.renderTodaysTasks(
+      UI.projects.filterTodays(),
+      UI.updateTaskController,
+      UI.deleteTaskController
+    );
+    TaskRenderer.renderThisWeek(
+      UI.projects.filterThisWeek(),
+      UI.updateTaskController,
+      UI.deleteTaskController
+    );
+    TaskRenderer.countTasksByTag(
+      UI.projects.getAllTasks(),
+      UI.projects.filterTodays(),
+      UI.projects.filterThisWeek()
+    );
   }
 
   static createProjectController() {
     const projectForm = document.getElementById('projectForm');
-    projectForm.addEventListener(
-      'submit',
-      (e) => {
-        e.preventDefault();
-        const taskName = document.getElementById('projectName');
-        UI.projects.addProjects(taskName.value);
-        Storage.setStorage(UI.projects.projectList);
-        const p = UI.projects.selectProject(taskName.value);
-        UI.renderProject(p);
-        this.renderProjectList();
-        projectForm.reset();
-        projectForm.classList.remove('show');
-      },
-      false
-    );
+    projectForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const taskName = document.getElementById('projectName');
+      UI.projects.addProjects(taskName.value);
+      Storage.setStorage(UI.projects.projectList);
+      const p = UI.projects.selectProject(taskName.value);
+      UI.renderProject(p);
+      UI.renderProjectList();
+      projectForm.reset();
+      projectForm.classList.remove('show');
+      UI.render();
+    });
   }
 
   static UpdateProjectController() {
@@ -73,6 +90,7 @@ export default class UI {
           }
           modal.reset();
         });
+        UI.render();
       });
     });
   }
@@ -94,7 +112,12 @@ export default class UI {
         Storage.setStorage(this.projects.projectList);
 
         UI.renderProjectList();
-        TaskRenderer.countTasksByTag(UI.projects.getAllTasks(), UI.projects.filterTodays(), UI.projects.filterThisWeek());
+        TaskRenderer.countTasksByTag(
+          UI.projects.getAllTasks(),
+          UI.projects.filterTodays(),
+          UI.projects.filterThisWeek()
+        );
+        UI.render();
       });
     });
   }
@@ -106,22 +129,19 @@ export default class UI {
 
     UI.UpdateProjectController();
     UI.deleteProjectController();
+
     UIEventHandler.closeSidebar();
   }
 
   static setActiveProject() {
     const projectsNames = document.querySelectorAll('.title');
     projectsNames.forEach((name) => {
-      name.addEventListener(
-        'click',
-        () => {
-          const projectName = name.textContent;
-          const project = UI.projects.selectProject(projectName);
-          Storage.setStorage(UI.projects.projectList);
-          UI.renderProject(project);
-        },
-        false
-      );
+      name.addEventListener('click', () => {
+        const projectName = name.textContent;
+        const project = UI.projects.selectProject(projectName);
+        Storage.setStorage(UI.projects.projectList);
+        UI.renderProject(project);
+      });
     });
   }
 
@@ -135,32 +155,51 @@ export default class UI {
     tasks.innerHTML += `
     <ul id="taskList"></ul>`;
     UIEventHandler.toggleForm2();
-    UI.createTaskConroller();
+    UI.createTaskController();
 
     if (project.todos.length > 0) {
-      TaskRenderer.render(project, UI.updateTaskController, UI.deleteTaskController);
+      TaskRenderer.render(
+        project,
+        UI.updateTaskController,
+        UI.deleteTaskController
+      );
     }
   }
 
-  static createTaskConroller() {
+  static taskFormSubmitHandler = null;
+
+  static createTaskController() {
     const taskForm = document.getElementById('taskForm');
     const projectName = document.querySelector('.pt').textContent;
     const form = document.querySelector('.form-container');
     const activeProject = UI.projects.selectProject(projectName);
-    taskForm.addEventListener('submit', (e) => {
+    taskForm.reset();
+
+    // Remove any existing event listeners
+    taskForm.removeEventListener('submit', UI.taskFormSubmitHandler);
+
+    // Define the event handler function
+    UI.taskFormSubmitHandler = function (e) {
       e.preventDefault();
-      const title = document.getElementById('taskName2');
-      const dt = document.getElementById('taskDate');
-      const date = new Date(dt.value).toDateString();
-      const priority = document.getElementById('select');
-      activeProject.addTodo(title.value, priority.value, date);
-      Storage.setStorage(UI.projects.projectList);
-      TaskRenderer.render(activeProject, UI.updateTaskController, UI.deleteTaskController);
-      UI.renderProjectList();
-      taskForm.reset();
+      const formData = new FormData(taskForm);
+      const data = Object.fromEntries(formData);
+
+      const { task, date, priority } = data;
+      console.log(task, 'task val');
+      activeProject.addTodo(task, priority, new Date(date).toDateString());
+      formData.delete(data);
       form.style.display = 'none';
-      TaskRenderer.countTasksByTag(UI.projects.getAllTasks(), UI.projects.filterTodays(), UI.projects.filterThisWeek());
-    });
+      Storage.setStorage(UI.projects.projectList);
+      TaskRenderer.render(
+        activeProject,
+        UI.updateTaskController,
+        UI.deleteTaskController
+      );
+
+      UI.render();
+    };
+
+    taskForm.addEventListener('submit', UI.taskFormSubmitHandler);
   }
 
   static updateTaskController(obj) {
@@ -175,7 +214,11 @@ export default class UI {
         activeProject.updateStatus(taskName);
         Storage.setStorage(UI.projects.projectList);
         activeProject = obj;
-        TaskRenderer.render(activeProject, UI.updateTaskController, UI.deleteTaskController);
+        TaskRenderer.render(
+          activeProject,
+          UI.updateTaskController,
+          UI.deleteTaskController
+        );
       });
     });
   }
@@ -192,22 +235,43 @@ export default class UI {
         switch (obj.name) {
           case 'all':
             activeProject = UI.projects.getAllTasks();
-            TaskRenderer.render(activeProject, UI.updateTaskController, UI.deleteTaskController);
+            TaskRenderer.render(
+              activeProject,
+              UI.updateTaskController,
+              UI.deleteTaskController
+            );
             break;
           case 'today':
             activeProject = UI.projects.filterTodays();
-            TaskRenderer.render(activeProject, UI.updateTaskController, UI.deleteTaskController);
+            TaskRenderer.render(
+              activeProject,
+              UI.updateTaskController,
+              UI.deleteTaskController
+            );
             break;
           case 'week':
             activeProject = UI.projects.filterThisWeek();
-            TaskRenderer.render(activeProject, UI.updateTaskController, UI.deleteTaskController);
+            TaskRenderer.render(
+              activeProject,
+              UI.updateTaskController,
+              UI.deleteTaskController
+            );
             break;
           default:
             activeProject = obj;
-            TaskRenderer.render(activeProject, UI.updateTaskController, UI.deleteTaskController);
+            TaskRenderer.render(
+              activeProject,
+              UI.updateTaskController,
+              UI.deleteTaskController
+            );
             break;
         }
-        TaskRenderer.countTasksByTag(UI.projects.getAllTasks(), UI.projects.filterTodays(), UI.projects.filterThisWeek());
+        TaskRenderer.countTasksByTag(
+          UI.projects.getAllTasks(),
+          UI.projects.filterTodays(),
+          UI.projects.filterThisWeek()
+        );
+        UI.render();
       });
     });
   }

@@ -48,7 +48,6 @@ export default class UIEventHandler {
       const taskForm = document.getElementById('taskForm');
       clsBtn.addEventListener('click', () => {
         form.style.display = 'none';
-        taskForm.reset();
       });
     });
   }

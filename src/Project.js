@@ -18,6 +18,8 @@ export default class Project {
   }
 
   updateStatus(title) {
-    this.todos.find((todo) => (todo.name === title ? (todo.status = !todo.status) : false));
+    this.todos.find((todo) =>
+      todo.name === title ? (todo.status = !todo.status) : false
+    );
   }
 }

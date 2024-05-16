@@ -3,6 +3,7 @@ import TaskRenderer from './UITaskRenderer';
 import ProjectList from './ProjectsList';
 import UIEventHandler from './UIEventHandlers';
 import { resetTasksView, generateProjectList } from './helper';
+import { isPast, isToday } from 'date-fns';
 
 export default class UI {
   static projects = new ProjectList();
@@ -173,30 +174,39 @@ export default class UI {
     const projectName = document.querySelector('.pt').textContent;
     const form = document.querySelector('.form-container');
     const activeProject = UI.projects.selectProject(projectName);
-    taskForm.reset();
+    const errorSpan = document.querySelector('.error');
 
-    // Remove any existing event listeners
     taskForm.removeEventListener('submit', UI.taskFormSubmitHandler);
 
-    // Define the event handler function
     UI.taskFormSubmitHandler = function (e) {
       e.preventDefault();
       const formData = new FormData(taskForm);
       const data = Object.fromEntries(formData);
-
       const { task, date, priority } = data;
-      console.log(task, 'task val');
-      activeProject.addTodo(task, priority, new Date(date).toDateString());
-      formData.delete(data);
-      form.style.display = 'none';
-      Storage.setStorage(UI.projects.projectList);
-      TaskRenderer.render(
-        activeProject,
-        UI.updateTaskController,
-        UI.deleteTaskController
-      );
 
-      UI.render();
+      errorSpan.style.display = 'none';
+
+      try {
+        if (isPast(new Date(date)) && !isToday(new Date(date)))
+          throw new Error('invalid date');
+
+        activeProject.addTodo(task, priority, new Date(date).toDateString());
+        formData.delete(data);
+        taskForm.reset();
+        Storage.setStorage(UI.projects.projectList);
+        TaskRenderer.render(
+          activeProject,
+          UI.updateTaskController,
+          UI.deleteTaskController
+        );
+        form.style.display = 'none';
+        UI.render();
+      } catch (err) {
+        taskForm.addEventListener('submit', UI.taskFormSubmitHandler);
+        errorSpan.style.display = 'block';
+        errorSpan.style.color = 'red';
+        taskForm.reset();
+      }
     };
 
     taskForm.addEventListener('submit', UI.taskFormSubmitHandler);

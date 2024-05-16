@@ -399,6 +399,9 @@ select option {
 #projectForm {
   display: none;
 }
+.error {
+  display: none;
+}
 
 /* media queries */
 @media (max-width: 768px) {

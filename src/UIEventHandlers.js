@@ -47,6 +47,7 @@ export default class UIEventHandler {
       const clsBtn = document.querySelector('.close-form-btn');
       const taskForm = document.getElementById('taskForm');
       clsBtn.addEventListener('click', () => {
+        taskForm.reset();
         form.style.display = 'none';
       });
     });

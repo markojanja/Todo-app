@@ -2,8 +2,7 @@ import Storage from './Storage';
 import TaskRenderer from './UITaskRenderer';
 import ProjectList from './ProjectsList';
 import UIEventHandler from './UIEventHandlers';
-import { resetTasksView, generateProjectList } from './helper';
-import { isPast, isToday } from 'date-fns';
+import { resetTasksView, generateProjectList, validateDate } from './helper';
 
 export default class UI {
   static projects = new ProjectList();
@@ -14,7 +13,7 @@ export default class UI {
     UI.renderProjectList();
     UIEventHandler.closeSidebar();
     UIEventHandler.toggleNav();
-    UIEventHandler.toggleFormButtonController();
+    UIEventHandler.toggleProjectForm();
   }
 
   static init() {
@@ -155,7 +154,7 @@ export default class UI {
     `;
     tasks.innerHTML += `
     <ul id="taskList"></ul>`;
-    UIEventHandler.toggleForm2();
+    UIEventHandler.toggleTaskForm();
     UI.createTaskController();
 
     if (project.todos.length > 0) {
@@ -184,12 +183,8 @@ export default class UI {
       const data = Object.fromEntries(formData);
       const { task, date, priority } = data;
 
-      errorSpan.style.display = 'none';
-
       try {
-        if (isPast(new Date(date)) && !isToday(new Date(date)))
-          throw new Error('invalid date');
-
+        validateDate(date);
         activeProject.addTodo(task, priority, new Date(date).toDateString());
         formData.delete(data);
         taskForm.reset();
@@ -203,9 +198,9 @@ export default class UI {
         UI.render();
       } catch (err) {
         taskForm.addEventListener('submit', UI.taskFormSubmitHandler);
+        errorSpan.textContent = err.message;
         errorSpan.style.display = 'block';
         errorSpan.style.color = 'red';
-        taskForm.reset();
       }
     };
 

@@ -32,17 +32,19 @@ export default class UIEventHandler {
     });
   }
 
-  static toggleFormButtonController() {
+  static toggleProjectForm() {
     const toggleBtn = document.querySelector('.toggle-form');
     toggleBtn.addEventListener('click', () => {
       const form = document.getElementById('projectForm');
       form.classList.toggle('show');
     });
   }
-  static toggleForm2() {
+  static toggleTaskForm() {
     const formBtn = document.querySelector('.toggle-form-2');
     const form = document.querySelector('.form-container');
+    const errorSpan = document.querySelector('.error');
     formBtn.addEventListener('click', () => {
+      errorSpan.style.display = 'none';
       form.style.display = 'flex';
       const clsBtn = document.querySelector('.close-form-btn');
       const taskForm = document.getElementById('taskForm');

@@ -1,7 +1,11 @@
+import { isPast, isToday } from 'date-fns';
+
 const countTasks = (id, obj) => {
   const linkId = document.getElementById(id);
 
-  linkId.innerHTML = obj ? `${id} <span class="badge">${obj.todos.length}</span>` : `${id} <span class="badge">0</span>`;
+  linkId.innerHTML = obj
+    ? `${id} <span class="badge">${obj.todos.length}</span>`
+    : `${id} <span class="badge">0</span>`;
 };
 
 const generateProjectList = (projectList) => {
@@ -49,4 +53,15 @@ const resetTasksView = (title) => {
   `;
 };
 
-export { generateTaskList, generateProjectList, resetTasksView, countTasks };
+const validateDate = (date) => {
+  if (isPast(new Date(date)) && !isToday(new Date(date)))
+    throw new Error('invalid date');
+};
+
+export {
+  generateTaskList,
+  generateProjectList,
+  resetTasksView,
+  countTasks,
+  validateDate,
+};
